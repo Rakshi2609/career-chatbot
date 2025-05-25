@@ -9,7 +9,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000", // Your React app's URL from .env
+    origin: process.env.CLIENT_URL, // Your React app's URL from .env
     credentials: true // Allow cookies/headers if needed (though not strictly necessary for this simple app)
 }));
 app.use(express.json()); // Body parser for JSON requests
