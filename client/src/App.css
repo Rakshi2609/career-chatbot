@@ -90,6 +90,7 @@ body {
     background-color: #fcfdfe; /* Even lighter subtle background for messages */
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     gap: 12px; /* More space between messages */
 }
 
