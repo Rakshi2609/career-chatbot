@@ -37,7 +37,7 @@ body {
 
 /* Chat Header */
 .chat-header {
-    background: linear-gradient(45deg, #4a90e2 0%, #007bff 100%); /* Blue gradient */
+    background: linear-gradient(45deg, #6a2626, #bd9f8f); /* Blue gradient */
     color: white;
     padding: 18px 25px;
     display: flex;
