@@ -14,6 +14,7 @@ function App() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showLanding, setShowLanding] = useState(true); // New state for landing page
     const messagesEndRef = useRef(null);
 
     // Scroll to the bottom of the chat window
@@ -26,7 +27,11 @@ function App() {
         const savedHistory = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (savedHistory) {
             try {
-                setMessages(JSON.parse(savedHistory));
+                const parsedHistory = JSON.parse(savedHistory);
+                if (parsedHistory.length > 0) {
+                    setMessages(parsedHistory);
+                    setShowLanding(false); // Hide landing if history exists
+                }
             } catch (e) {
                 console.error("Failed to parse chat history from Local Storage:", e);
                 localStorage.removeItem(LOCAL_STORAGE_KEY); // Clear corrupted data
@@ -45,6 +50,8 @@ function App() {
         e.preventDefault();
         if (input.trim() === '') return;
 
+        setShowLanding(false); // Hide landing page once user interacts
+
         const userMessage = { role: 'user', text: input };
         // Optimistically add user message to UI
         setMessages((prevMessages) => [...prevMessages, userMessage]);
@@ -52,11 +59,9 @@ function App() {
         setLoading(true);
 
         try {
-            // Send the current messages history along with the new message to the backend
-            // The backend needs this history to maintain conversation context with Gemini
             const response = await axios.post(`${API_URL}/message`, {
                 message: input,
-                history: [...messages, userMessage], // Send current history + new user message
+                history: [...messages, userMessage],
             });
 
             const botMessage = { role: 'model', text: response.data.response };
@@ -77,7 +82,12 @@ function App() {
             setMessages([]); // Clear messages in state
             localStorage.removeItem(LOCAL_STORAGE_KEY); // Clear from Local Storage
             console.log('Chat history cleared.');
+            setShowLanding(true); // Show landing page again on new chat
         }
+    };
+
+    const handleStartChatFromLanding = () => {
+        setShowLanding(false); // Hide landing page
     };
 
     return (
@@ -86,29 +96,41 @@ function App() {
                 <h2>Career Advice Chatbot</h2>
                 <button onClick={handleNewChat} disabled={loading}>New Chat</button>
             </div>
-            <div className="chat-messages">
-                {messages.length === 0 ? (
-                    <div className="no-messages">Type a question to get career advice!</div>
-                ) : (
-                    messages.map((msg, index) => (
-                        <div key={index} className={`message ${msg.role}`}>
-                            {/* Render Markdown content here */}
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
-                        </div>
-                    ))
-                )}
-                {loading && <div className="loading-indicator">Thinking...</div>}
-                <div ref={messagesEndRef} /> {/* Scroll target */}
-            </div>
+
+            {showLanding && messages.length === 0 ? (
+                <div className="landing-page-content">
+                    <div className="landing-text-area">
+                        <h1>Welcome to your Career Guide!</h1>
+                        <p>Unlock your potential with personalized career advice.</p>
+                        <p>Ask me anything about job searches, interviews, skill development, and more.</p>
+                        <button className="start-chat-button" onClick={handleStartChatFromLanding}>Start Chatting Now</button>
+                    </div>
+                </div>
+            ) : (
+                <div className="chat-messages">
+                    {messages.length === 0 && !showLanding ? (
+                        <div className="no-messages">Type a question to get career advice!</div>
+                    ) : (
+                        messages.map((msg, index) => (
+                            <div key={index} className={`message ${msg.role}`}>
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
+                            </div>
+                        ))
+                    )}
+                    {loading && <div className="loading-indicator">Thinking...</div>}
+                    <div ref={messagesEndRef} /> {/* Scroll target */}
+                </div>
+            )}
+
             <form onSubmit={handleSendMessage} className="chat-input-form">
                 <input
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask for career advice..."
-                    disabled={loading}
+                    disabled={loading || showLanding} // Disable input on landing page
                 />
-                <button type="submit" disabled={loading}>Send</button>
+                <button type="submit" disabled={loading || showLanding}>Send</button>
             </form>
         </div>
     );
