@@ -312,7 +312,7 @@ body {
 }
 
 .start-chat-button {
-    background: linear-gradient(45deg, #5cb85c 0%, #28a745 100%); /* Green gradient */
+    background: #1f2a9c; /* Green gradient */
     color: white;
     border: none;
     padding: 15px 35px;
