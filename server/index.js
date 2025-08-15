@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "career-chatbot-ruby.vercel.app",
     credentials: true
 }));
 app.use(express.json());
