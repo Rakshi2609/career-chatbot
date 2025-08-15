@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: "career-chatbot-ruby.vercel.app",
+    origin: process.env.CLIENT_URL,
     credentials: true
 }));
 app.use(express.json());
