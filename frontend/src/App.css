@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-black text-white;
+  }
+}
+
+@keyframes gradientMove {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-gradient {
+  /* This is now a utility class you can apply */
+  background-size: 200% 200%; /* Smaller size can make the gradient more visible */
+  animation: gradientMove 10s ease infinite;
+}

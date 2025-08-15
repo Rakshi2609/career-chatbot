@@ -2,79 +2,159 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { v4: uuidv4 } = require('uuid');
 
-dotenv.config(); // Load environment variables from .env
-
+dotenv.config();
 const app = express();
 
-// Middleware
 app.use(cors({
-    origin: process.env.CLIENT_URL, // Your React app's URL from .env
-    credentials: true // Allow cookies/headers if needed (though not strictly necessary for this simple app)
+    origin: "http://localhost:5173",
+    credentials: true
 }));
-app.use(express.json()); // Body parser for JSON requests
+app.use(express.json());
 
-// Initialize Gemini API
-// Use a currently supported model for chat interactions, e.g., "gemini-1.5-flash"
-// Check Google AI Studio / Gemini API documentation for the latest available models
+const chatHistories = new Map();
+    
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Changed model name here!
+const primaryModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const fallbackModel = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-// Route to send a message and get a response from Gemini
-app.post('/api/chat/message', async (req, res) => {
-    try {
-        const { message, history } = req.body; // Expect history from frontend
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-        console.log('Received message request:', req.body); // For debugging
-        console.log('User Message:', message);              // For debugging
-        console.log('Received History (from frontend):', history); // For debugging
+const CAREER_PROMPT = `
+You are "CareerNavigator AI", an expert career consultant and mentor with 20+ years of experience
+helping students, graduates, and professionals find the right career path. Your job is to give 
+detailed, personalized advice on:
 
-        if (!message) {
-            return res.status(400).json({ error: 'Message is required.' });
-        }
+- Career exploration based on skills, interests, and values.
+- Resume and cover letter improvement.
+- Interview preparation with realistic practice questions.
+- Guidance on higher education opportunities, scholarships, and certifications.
+- Salary trends, industry growth, and job market analysis.
+- Switching careers effectively without losing momentum.
+- Building in-demand skills for the future.
+- Networking strategies and professional growth tips.
 
-        // --- FIX 2: Filter history to only include valid Gemini roles ('user', 'model') ---
-        const conversationHistory = history
-            .filter(msg => ['user', 'model'].includes(msg.role)) // Crucial: Filter out 'error' or other invalid roles
-            .map(msg => ({
-                role: msg.role,
-                parts: [{ text: msg.text }]
-            }));
+Your advice should:
+- Be **clear, step-by-step, and tailored** to the user’s situation.
+- Include **real-world examples and actionable tips**.
+- Be empathetic, supportive, and encouraging.
+- Avoid generic motivational lines — focus on **practical guidance**.
+- If user’s query is vague, ask clarifying questions before giving advice.
 
-        console.log('Formatted History for Gemini (after filtering):', conversationHistory); // For debugging
+Do not answer unrelated questions. If the question is not about career or education, politely say:
+"I’m here to provide career-related advice. Could you rephrase your question to focus on your career path, education, or professional growth?"
+`;
 
-        const chatInstance = model.startChat({
-            history: conversationHistory,
-            generationConfig: {
-                maxOutputTokens: 500, // Adjust as needed
-            },
-        });
+async function retryWithBackoff(fn, retries = 5) {
+    let attempt = 0;
+    let delayTime = 1000;
 
-        // Send the user's current message to the chat instance
-        const result = await chatInstance.sendMessage(message);
-        const responseText = await result.response.text();
-
-        console.log('Gemini Raw Response:', responseText); // For debugging
-
-        res.json({ response: responseText });
-    } catch (error) {
-        // Log the full error object for better debugging on the server
-        console.error('Error generating content from Gemini API:', error);
-        console.error('Full Error Object:', error);
-
-        // More specific error handling could be added here based on error.status or error.code
-        if (error.status === 404) { // Specific check for 404 if model not found
-             res.status(500).json({ error: 'Chatbot model not found or invalid. Please check backend configuration.' });
-        } else {
-             res.status(500).json({ error: 'Failed to get a response from the chatbot. Please try again.' });
+    while (attempt < retries) {
+        try {
+            return await fn();
+        } catch (err) {
+            if (err.status === 503) {
+                const jitter = Math.floor(Math.random() * 500);
+                console.warn(`Gemini overloaded. Retry ${attempt + 1}/${retries} in ${(delayTime + jitter) / 1000}s...`);
+                await delay(delayTime + jitter);
+                delayTime *= 2;
+                attempt++;
+            } else {
+                throw err;
+            }
         }
     }
-});
+    throw new Error("Max retries reached - Gemini still overloaded");
+}
 
-// Basic route to confirm server is running
-app.get('/', (req, res) => {
-    res.send('Chatbot API is running!');
+async function sendMessageWithFallback(history, message) {
+    try {
+        const chatInstance = primaryModel.startChat({
+            history,
+            generationConfig: { maxOutputTokens: 1000 },
+        });
+        const result = await retryWithBackoff(() => chatInstance.sendMessage(message));
+        return await result.response.text();
+    } catch (err) {
+        if (err.status === 503) {
+            console.log("Falling back to gemini-pro...");
+            try {
+                const fallbackChat = fallbackModel.startChat({
+                    history,
+                    generationConfig: { maxOutputTokens: 1000 },
+                });
+                const result = await retryWithBackoff(() => fallbackChat.sendMessage(message));
+                return await result.response.text();
+            } catch (err2) {
+                console.error("Fallback model also overloaded.");
+                return "⚠️ Our AI is experiencing heavy traffic right now. Please try again in a few minutes.";
+            }
+        }
+        throw err;
+    }
+}
+
+async function handleChatMessage(req, res) {
+    let { message, sessionId } = req.body;
+    if (!message) {
+        return res.status(400).json({ error: 'Message is required.' });
+    }
+
+    let conversationHistory;
+    if (!sessionId) {
+        sessionId = uuidv4();
+        conversationHistory = [{ role: "system", text: CAREER_PROMPT }];
+        console.log(`New chat session started: ${sessionId}`);
+    } else {
+        conversationHistory = chatHistories.get(sessionId) || [{ role: "system", text: CAREER_PROMPT }];
+    }
+
+    const formattedHistory = conversationHistory.map(msg => ({
+        role: msg.role === "system" ? "user" : msg.role, 
+        parts: [{ text: msg.text }]
+    }));
+
+    const responseText = await sendMessageWithFallback(formattedHistory, message);
+
+    conversationHistory.push({ role: 'user', text: message });
+    conversationHistory.push({ role: 'model', text: responseText });
+    chatHistories.set(sessionId, conversationHistory);
+
+    const publicHistory = conversationHistory.filter(msg => msg.role !== "system");
+
+    res.json({
+        response: responseText,
+        sessionId,
+        history: publicHistory
+    });
+}
+
+const queue = [];
+let isProcessing = false;
+
+function processQueue() {
+    if (isProcessing || queue.length === 0) return;
+    isProcessing = true;
+
+    const { req, res } = queue.shift();
+    handleChatMessage(req, res)
+        .catch(err => {
+            console.error("Chat processing error:", err);
+            res.status(500).json({
+                error: "The AI is currently experiencing issues. Please try again later."
+            });
+        })
+        .finally(() => {
+            isProcessing = false;
+            processQueue();
+        });
+}
+
+app.post('/api/chat/message', (req, res) => {
+    queue.push({ req, res });
+    processQueue();
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
