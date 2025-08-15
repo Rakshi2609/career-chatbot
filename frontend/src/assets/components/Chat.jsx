@@ -118,7 +118,7 @@ export default function App() {
 
     try {
       // The real API call to your backend
-      const res = await axios.post("http://localhost:5000/api/chat/message", {
+      const res = await axios.post("https://career-chatbot-t5cr.onrender.com/api/chat/message", {
         message: newMsg.text,
         sessionId: sessionId, // Send the session ID for context
       });
