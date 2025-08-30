@@ -58,44 +58,52 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+             {/* Nirvik */}
              <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 text-center">
                 <Image
-                    data-ai-hint="person portrait"
-                    src="https://picsum.photos/200/200"
-                    alt="Team Member 1"
+                    src="https://picsum.photos/210/210"
+                    alt="Nirvik"
                     width={100}
                     height={100}
                     className="mx-auto h-24 w-24 rounded-full"
                 />
-                <h4 className="mt-4 text-lg font-semibold">Alex Johnson</h4>
-                <p className="text-primary">Lead AI Developer</p>
-                <p className="mt-2 text-sm text-muted-foreground">Architect of the MIRA conversational engine.</p>
+                <h4 className="mt-4 text-lg font-semibold">Nirvik</h4>
+                <p className="text-primary">ML & Web Engineer</p>
+                <p className="mt-2 text-sm text-muted-foreground">Focused on building scalable ML models and web integration.</p>
              </div>
+             {/* Soumya */}
              <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 text-center">
                 <Image
-                    data-ai-hint="person portrait"
-                    src="https://picsum.photos/201/201"
-                    alt="Team Member 2"
+                    src="https://picsum.photos/211/211"
+                    alt="Soumya Gupta"
                     width={100}
                     height={100}
                     className="mx-auto h-24 w-24 rounded-full"
                 />
-                <h4 className="mt-4 text-lg font-semibold">Maria Garcia</h4>
-                <p className="text-primary">UX/UI Designer</p>
-                <p className="mt-2 text-sm text-muted-foreground">Crafting the intuitive and beautiful interface.</p>
+                <h4 className="mt-4 text-lg font-semibold">Soumya Gupta</h4>
+                <p className="text-primary">ML & Backend Engineer</p>
+                <p className="mt-2 text-sm text-muted-foreground">Designs backend systems and powers AI with ML pipelines.</p>
              </div>
+             {/* Rakshith */}
              <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 text-center">
                 <Image
-                    data-ai-hint="person portrait"
-                    src="https://picsum.photos/202/202"
-                    alt="Team Member 3"
+                    src="https://picsum.photos/212/212"
+                    alt="Rakshith Ganjimut"
                     width={100}
                     height={100}
                     className="mx-auto h-24 w-24 rounded-full"
                 />
-                <h4 className="mt-4 text-lg font-semibold">Sam Chen</h4>
-                <p className="text-primary">Product Manager</p>
-                <p className="mt-2 text-sm text-muted-foreground">Guiding the vision and features of MIRA.</p>
+                <h4 className="mt-4 text-lg font-semibold">Rakshith Ganjimut</h4>
+                <p className="text-primary">MERN Developer</p>
+                <p className="mt-2 text-sm text-muted-foreground">Full-stack developer bringing MIRA AI to life with MERN & Next.js.</p>
+                <div className="mt-3 flex justify-center space-x-4">
+                  <a href="https://github.com/Rakshi2609" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                    GitHub
+                  </a>
+                  <a href="https://www.linkedin.com/in/rakshith-ganjimut/" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                    LinkedIn
+                  </a>
+                </div>
              </div>
           </div>
         </div>
