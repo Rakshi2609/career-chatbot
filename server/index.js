@@ -6,11 +6,31 @@ const { v4: uuidv4 } = require('uuid');
 
 dotenv.config();
 const app = express();
+// Define the list of allowed origins
+const whitelist = [
+    process.env.CLIENT_URL, // Your production URL from .env file
+    'http://localhost:5173', // Your local development URL
+    'http://localhost:9002' // Your API server URL
+];
 
-app.use(cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true
-}));
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        // or if the origin is in our whitelist
+        if (!origin || whitelist.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true // If you need to handle cookies or authorization headers
+};
+
+// Use the CORS middleware with your options
+app.use(cors(corsOptions));
+
+// --- END: FIX FOR CORS ---
+
 app.use(express.json());
 
 const chatHistories = new Map();

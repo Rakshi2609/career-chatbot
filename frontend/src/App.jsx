@@ -1,23 +1,27 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Chat from './assets/components/Chat';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Chatbot from "./pages/Chatbot"; // Ensure this path is correct
 
 function App() {
   return (
-    // The BrowserRouter should be the single, top-level router for your app.
-    <BrowserRouter>
-      {/* The Routes component is a container for all your individual routes. */}
-      <Routes>
-        {/* This route will automatically redirect the user from the base URL ("/") to "/chat". */}
-        <Route path="/" element={<Navigate to="/chat" />} />
-        
-        {/* This route renders your Chat component when the URL is "/chat". */}
-        <Route path="/chat" element={<Chat />} />
-
-        {/* You can add other routes for other pages here in the future. */}
-        {/* For example: <Route path="/about" element={<div>About Page</div>} /> */}
-      </Routes>
-    </BrowserRouter>
+    <Router>
+      <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
+        <Navbar />
+        <main className="flex-1 flex flex-col">
+          <Routes>
+            <Route path="/" element={<Navigate to="/home" replace />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/chat" element={<Chatbot />} />
+            <Route path="/about" element={<About />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 
