@@ -9,6 +9,7 @@ const app = express();
 // Define the list of allowed origins
 const whitelist = [
     process.env.CLIENT_URL, // Your production URL from .env file
+    process.env.NEXT, // Your production URL from .env file
     'http://localhost:5173', // Your local development URL
     'http://localhost:9002' // Your API server URL
 ];
