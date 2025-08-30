@@ -58,41 +58,17 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-             {/* Nirvik */}
              <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 text-center">
-                <Image
-                    src="https://picsum.photos/210/210"
-                    alt="Nirvik"
-                    width={100}
-                    height={100}
-                    className="mx-auto h-24 w-24 rounded-full"
-                />
                 <h4 className="mt-4 text-lg font-semibold">Nirvik</h4>
                 <p className="text-primary">ML & Web Engineer</p>
                 <p className="mt-2 text-sm text-muted-foreground">Focused on building scalable ML models and web integration.</p>
              </div>
-             {/* Soumya */}
              <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 text-center">
-                <Image
-                    src="https://picsum.photos/211/211"
-                    alt="Soumya Gupta"
-                    width={100}
-                    height={100}
-                    className="mx-auto h-24 w-24 rounded-full"
-                />
                 <h4 className="mt-4 text-lg font-semibold">Soumya Gupta</h4>
                 <p className="text-primary">ML & Backend Engineer</p>
                 <p className="mt-2 text-sm text-muted-foreground">Designs backend systems and powers AI with ML pipelines.</p>
              </div>
-             {/* Rakshith */}
              <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 text-center">
-                <Image
-                    src="https://picsum.photos/212/212"
-                    alt="Rakshith Ganjimut"
-                    width={100}
-                    height={100}
-                    className="mx-auto h-24 w-24 rounded-full"
-                />
                 <h4 className="mt-4 text-lg font-semibold">Rakshith Ganjimut</h4>
                 <p className="text-primary">MERN Developer</p>
                 <p className="mt-2 text-sm text-muted-foreground">Full-stack developer bringing MIRA AI to life with MERN & Next.js.</p>
