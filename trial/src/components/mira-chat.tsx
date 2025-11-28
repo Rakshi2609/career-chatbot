@@ -69,7 +69,7 @@ export default function MiraChat() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/chat/message", {
+      const response = await fetch("/api/chat/message", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: messageContent, sessionId }),
