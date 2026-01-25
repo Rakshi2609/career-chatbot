@@ -1,6 +1,6 @@
 # Career Chatbot
 
-A full-stack AI-powered career advice chatbot, featuring a Node.js/Express backend (with Google Gemini integration) and a modern React frontend (Vite + Tailwind CSS). The project is organized into three main folders: `server`, `frontend`, and `client`.
+A full-stack AI-powered career advice chatbot, featuring a Node.js/Express backend with Google Gemini integration and a modern Next.js frontend with Genkit AI integration.
 
 ---
 
@@ -9,8 +9,7 @@ A full-stack AI-powered career advice chatbot, featuring a Node.js/Express backe
 ```
 career-chatbot/
   server/     # Node.js backend (Express, Gemini API)
-  frontend/   # Modern React frontend (Vite, Tailwind)
-  client/     # (Legacy) Create React App frontend
+  trial/      # Next.js frontend with Genkit AI (Tailwind, shadcn/ui)
 ```
 
 ---
@@ -26,43 +25,51 @@ career-chatbot/
 
 ### `server/.env`
 
-Create a `.env` file in the `server` directory with the following content:
+The `.env` file already exists in the `server` directory. Update it with your configuration:
 
-```
+```env
 PORT=5000
-GEMINI_API_KEY=your_google_gemini_api_key_here
-CLIENT_URL=http://localhost:5173
+GEMINI_API_KEY=your_gemini_api_key_here
+CLIENT_URL=http://localhost:9002
 ```
 
 - `PORT`: Port for the backend server (default: 5000)
-- `GEMINI_API_KEY`: Your Google Gemini API key (get from Google AI Studio)
-- `CLIENT_URL`: The URL where your frontend runs (default for Vite is `http://localhost:5173`)
+- `GEMINI_API_KEY`: Your Google Gemini API key (get from [Google AI Studio](https://makersuite.google.com/app/apikey))
+- `CLIENT_URL`: The URL where your frontend runs (Next.js runs on port 9002)
 
-### `frontend/.env` (optional)
+### `trial/.env.local`
 
-If you want to use environment variables in the frontend, create a `.env` file in `frontend/`:
+A `.env.local` file has been created in the `trial` directory. Update it with your keys:
 
+```env
+GOOGLE_GENAI_API_KEY=your_google_gemini_api_key_here
+PORT=9002
+NEXT_PUBLIC_API_URL=http://localhost:5000
 ```
-VITE_API_URL=http://localhost:5000
-```
+
+- `GOOGLE_GENAI_API_KEY`: Your Google Gemini API key for Genkit
+- `PORT`: Port for the Next.js app (default: 9002)
+- `NEXT_PUBLIC_API_URL`: Backend API URL
 
 ---
 
 ## Local Development
-
-### 1. Install Dependencies
-
-Open a terminal in the root project folder and run:
-
-```sh
+# Install server dependencies
 cd server
 npm install
 
-cd ../frontend
+# Install trial (Next.js) dependencies
+cd ../trial
 npm install
 ```
 
-### 2. Start the Backend
+### 2. Update Environment Variables
+
+Make sure to update both `.env` files with your actual API keys:
+- `server/.env` - Add your Gemini API key
+- `trial/.env.local` - Add your Google Genai API key
+
+### 3. Start the Backend
 
 In the `server` directory:
 
@@ -72,15 +79,38 @@ npm start
 
 The backend will run on [http://localhost:5000](http://localhost:5000).
 
-### 3. Start the Frontend
+### 4. Start the Frontend
 
-In a new terminal, in the `frontend` directory:
+In a new terminal, in the `trial` directory:
 
 ```sh
 npm run dev
 ```
 
-The frontend will run on [http://localhost:5173](http://localhost:5173).
+The Next.js frontend will run on [http://localhost:9002](http://localhost:9002).
+
+### 5. (Optional) Run Genkit Development Server
+
+For AI flow debugging with Genkit UI:
+
+```sh
+cd trial
+npm run genkit:dev
+```
+
+---9002](http://localhost:9002) in your web browser after starting both backend and frontend servers.
+
+2. **Start Chatting:**  
+   - Navigate to the chatbot page
+   - Type your career-related questions or concerns in the chat input box
+   - Press "Send" or hit Enter to submit your query
+   - Get AI-powered career advice powered by Google Gemini
+
+3. **Features:**
+   - Real-time AI responses for career guidance
+   - Voice interaction capabilities
+   - Modern, responsive UI with shadcn/ui components
+   - Session-based chat historyhttp://localhost:9002
 
 ---
 

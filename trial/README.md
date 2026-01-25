@@ -1,140 +1,233 @@
-# Career Chatbot
+# Career Chatbot - Frontend (Next.js)
 
-A full-stack AI-powered career advice chatbot, featuring a Node.js/Express backend (with Google Gemini integration) and a modern React frontend (Vite + Tailwind CSS). The project is organized into three main folders: `server`, `frontend`, and `client`.
+Modern Next.js frontend for the Career Chatbot application with Genkit AI integration, built with TypeScript, Tailwind CSS, and shadcn/ui components.
 
----
+## Features
 
-## Folder Structure
+- **Next.js 15** - React framework with App Router
+- **Genkit AI Integration** - Google AI Generative SDK
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first styling
+- **shadcn/ui** - Beautiful, accessible components
+- **Voice Support** - Voice interaction capabilities
+- **Responsive Design** - Mobile-first approach
+- **Firebase Integration** - Authentication and backend services
 
-```
-career-chatbot/
-  server/     # Node.js backend (Express, Gemini API)
-  frontend/   # Modern React frontend (Vite, Tailwind)
-  client/     # (Legacy) Create React App frontend
-```
+## Tech Stack
 
----
+### Core
+- Next.js 15.5.9
+- React 18.3.1
+- TypeScript 5.x
+- Tailwind CSS
 
-## Prerequisites
+### AI & Backend
+- Genkit 1.14.1
+- @genkit-ai/googleai 1.14.1
+- @genkit-ai/next 1.14.1
+- Firebase 11.9.1
 
-- [Node.js](https://nodejs.org/) (v18+ recommended)
-- [npm](https://www.npmjs.com/) (comes with Node.js)
+### UI Components
+- shadcn/ui (Radix UI primitives)
+- Lucide React (icons)
+- Recharts (data visualization)
+- date-fns (date utilities)
 
----
-
-## .env File Setup
-
-### `server/.env`
-
-Create a `.env` file in the `server` directory with the following content:
-
-```
-PORT=5000
-GEMINI_API_KEY=your_google_gemini_api_key_here
-CLIENT_URL=http://localhost:5173
-```
-
-- `PORT`: Port for the backend server (default: 5000)
-- `GEMINI_API_KEY`: Your Google Gemini API key (get from Google AI Studio)
-- `CLIENT_URL`: The URL where your frontend runs (default for Vite is `http://localhost:5173`)
-
-### `frontend/.env` (optional)
-
-If you want to use environment variables in the frontend, create a `.env` file in `frontend/`:
-
-```
-VITE_API_URL=http://localhost:5000
-```
-
----
-
-## Local Development
+## Setup
 
 ### 1. Install Dependencies
 
-Open a terminal in the root project folder and run:
-
-```sh
-cd server
-npm install
-
-cd ../frontend
+```bash
 npm install
 ```
 
-### 2. Start the Backend
+### 2. Configure Environment Variables
 
-In the `server` directory:
+Create a `.env.local` file in the root directory:
 
-```sh
-npm start
+```env
+GOOGLE_GENAI_API_KEY=your_google_gemini_api_key_here
+PORT=9002
+NEXT_PUBLIC_API_URL=http://localhost:5000
 ```
 
-The backend will run on [http://localhost:5000](http://localhost:5000).
+Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey).
 
-### 3. Start the Frontend
+### 3. Run Development Server
 
-In a new terminal, in the `frontend` directory:
-
-```sh
+```bash
 npm run dev
 ```
 
-The frontend will run on [http://localhost:5173](http://localhost:5173).
+App will run on `http://localhost:9002`.
 
----
+### 4. (Optional) Run Genkit Development UI
 
-## Accessing the App
+For debugging AI flows:
 
-Open your browser and go to [http://localhost:5173](http://localhost:5173).
+```bash
+npm run genkit:dev
+```
 
----
+Or with file watching:
 
-## How to Use the Career Chatbot
+```bash
+npm run genkit:watch
+```
 
-1. **Open the Application:**  
-   Visit [http://localhost:5173](http://localhost:5173) in your web browser after starting both backend and frontend servers.
+## Available Scripts
 
-2. **Start Chatting:**  
-   - Type your career-related questions or concerns in the chat input box.
-   - Press "Send" or hit Enter to submit your query.
-   - The chatbot will respond with AI-powered advice and suggestions.
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start development server with Turbopack |
+| `npm run build` | Build for production |
+| `npm start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript type checking |
+| `npm run genkit:dev` | Start Genkit development UI |
+| `npm run genkit:watch` | Start Genkit UI with file watching |
 
-3. **Voice Input (if available):**  
-   - Click the microphone icon to speak your question (if the feature is enabled in the UI).
-   - Wait for the chatbot to process and respond.
+## Project Structure
 
-4. **Explore Further:**  
-   - Ask follow-up questions or request more details.
-   - Use the chatbot for resume tips, interview preparation, career path suggestions, and more.
+```
+trial/
+├── src/
+│   ├── app/              # Next.js App Router pages
+│   │   ├── page.tsx      # Home page
+│   │   ├── about/        # About page
+│   │   ├── contact/      # Contact page
+│   │   └── api/          # API routes
+│   │       └── chat/     # Chat API endpoints
+│   ├── components/       # React components
+│   │   ├── chat-message.tsx
+│   │   ├── mira-chat.tsx
+│   │   ├── voice-status-bar.tsx
+│   │   └── ui/          # shadcn/ui components
+│   ├── ai/              # Genkit AI configuration
+│   │   ├── genkit.ts    # AI setup
+│   │   └── dev.ts       # Development flows
+│   ├── hooks/           # Custom React hooks
+│   └── lib/             # Utility functions
+├── public/              # Static assets
+├── docs/               # Documentation
+├── .env.local          # Environment variables (not in git)
+├── next.config.ts      # Next.js configuration
+├── tailwind.config.ts  # Tailwind configuration
+└── package.json        # Dependencies and scripts
+```
 
----
+## Pages
 
-## Notes
+- **/** - Home page
+- **/about** - About the application
+- **/contact** - Contact page
+- **/chatbot** - Main chatbot interface (if implemented)
 
-- The `client` folder contains a legacy Create React App version. The recommended frontend is in the `frontend` folder (Vite + React).
-- Make sure your `.env` files are **not committed to version control** (they are in `.gitignore` by default).
-- If you want to deploy, update the `CLIENT_URL` and API URLs accordingly.
+## API Routes
 
----
+### POST `/api/chat`
 
-## Useful Scripts
+Chat endpoint for AI interactions.
 
-- **Backend:**  
-  `npm start` — Start the Express server
+**Request:**
+```json
+{
+  "message": "How do I become a data scientist?",
+  "sessionId": "optional-session-id"
+}
+```
 
-- **Frontend:**  
-  `npm run dev` — Start Vite dev server  
-  `npm run build` — Build for production  
-  `npm run preview` — Preview production build
+**Response:**
+```json
+{
+  "response": "AI-generated response...",
+  "sessionId": "session-id"
+}
+```
 
----
+### POST `/api/chat/message`
 
-## Credits
+Alternative message endpoint.
 
-- Google Gemini API via [`@google/generative-ai`](https://www.npmjs.com/package/@google/generative-ai)
-- React, Vite, Tailwind CSS
+## Components
 
----
+### Core Components
+- `chat-message.tsx` - Individual chat message display
+- `mira-chat.tsx` - Main chat interface
+- `voice-status-bar.tsx` - Voice interaction status
+- `header.tsx` / `footer.tsx` - Layout components
 
-For any issues, please open an issue in the repository.
+### UI Components (shadcn/ui)
+Pre-built, accessible components in `src/components/ui/`:
+- Buttons, Cards, Dialogs
+- Forms, Inputs, Selects
+- Accordions, Tabs, Tooltips
+- Charts, Progress, Sliders
+- And many more...
+
+## Styling
+
+This project uses Tailwind CSS with custom configuration. The design system includes:
+- Custom color palette
+- Responsive breakpoints
+- Dark mode support
+- Animation utilities
+
+## Firebase Configuration
+
+If using Firebase features, add these to `.env.local`:
+
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
+
+## Genkit AI
+
+The application uses Genkit for AI flow management. Configuration is in `src/ai/genkit.ts`.
+
+### Key Features:
+- Google AI integration (Gemini models)
+- Flow management for AI interactions
+- Development UI for debugging
+- Streaming responses support
+
+## Building for Production
+
+```bash
+npm run build
+npm start
+```
+
+The optimized production build will be created in `.next/`.
+
+## Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `GOOGLE_GENAI_API_KEY` | Google Gemini API key | Yes |
+| `PORT` | Development server port | No (default: 9002) |
+| `NEXT_PUBLIC_API_URL` | Backend API URL | Yes |
+| `NEXT_PUBLIC_FIREBASE_*` | Firebase config | Optional |
+
+## Deployment
+
+This project can be deployed to:
+- Vercel (recommended for Next.js)
+- Google Cloud (App Hosting)
+- Any Node.js hosting platform
+
+See `apphosting.yaml` for Google Cloud deployment configuration.
+
+## Documentation
+
+Additional documentation is available in the `docs/` folder:
+- `blueprint.md` - Project architecture and design
+
+## License
+
+ISC
