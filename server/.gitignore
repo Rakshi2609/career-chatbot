@@ -1,2 +1,4 @@
+# Ignore environment variable files
+.env
 node_modules
 .env  # <--- Make sure this is present!
